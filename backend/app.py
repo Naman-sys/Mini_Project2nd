@@ -67,12 +67,18 @@ from data_loader import (
 
 # Configure frontend static files for production
 frontend_build_path = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'dist')
+absolute_frontend_path = os.path.abspath(frontend_build_path)
 
 # Initialize Flask App
-if os.path.exists(frontend_build_path):
-    app = Flask(__name__, static_folder=frontend_build_path, static_url_path='/')
-    print(f"✓ Serving frontend from {frontend_build_path}")
+print(f"🔍 Looking for frontend at: {absolute_frontend_path}")
+print(f"🔍 Frontend exists: {os.path.exists(absolute_frontend_path)}")
+if os.path.exists(absolute_frontend_path):
+    index_file = os.path.join(absolute_frontend_path, 'index.html')
+    print(f"🔍 index.html exists: {os.path.exists(index_file)}")
+    app = Flask(__name__, static_folder=absolute_frontend_path, static_url_path='/')
+    print(f"✓ Serving frontend from {absolute_frontend_path}")
 else:
+    print(f"⚠ Frontend not found at {absolute_frontend_path}, API-only mode")
     app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', secrets.token_hex(32))
@@ -90,11 +96,11 @@ CORS(app, supports_credentials=True, origins=allowed_origins)
 @app.route('/')
 def serve_frontend_index():
     """Serve index.html for root path"""
-    index_path = os.path.join(frontend_build_path, 'index.html')
+    index_path = os.path.join(absolute_frontend_path, 'index.html')
     if os.path.exists(index_path):
         from flask import send_file
         return send_file(index_path)
-    return {'status': 'API active'}, 200
+    return {'status': 'API active', 'message': 'Frontend not built'}, 200
 
 @app.route('/<path:path>')
 def serve_frontend_routes(path):
@@ -104,13 +110,13 @@ def serve_frontend_routes(path):
         return {'error': 'Endpoint not found'}, 404
     
     # Try to serve static files
-    static_file_path = os.path.join(frontend_build_path, path)
+    static_file_path = os.path.join(absolute_frontend_path, path)
     if os.path.exists(static_file_path) and os.path.isfile(static_file_path):
         from flask import send_file
         return send_file(static_file_path)
     
     # Serve index.html for SPA routing
-    index_path = os.path.join(frontend_build_path, 'index.html')
+    index_path = os.path.join(absolute_frontend_path, 'index.html')
     if os.path.exists(index_path):
         from flask import send_file
         return send_file(index_path)
