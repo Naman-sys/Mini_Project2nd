@@ -2,7 +2,7 @@ services:
   - type: web
     name: sustainable-design-api
     runtime: python
-    pythonVersion: 3.11
+    pythonVersion: 3.11.9
     buildCommand: |
       pip install --upgrade pip && \
       pip install -r requirements.txt && \
@@ -13,7 +13,7 @@ services:
     startCommand: gunicorn --chdir backend --workers 4 --worker-class sync --bind 0.0.0.0:$PORT app:app
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11
+        value: 3.11.9
       - key: FLASK_ENV
         value: production
       - key: DATABASE_URL
