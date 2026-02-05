@@ -37,9 +37,9 @@ npm-debug.log
 npm-error.log
 yarn-error.log
 
-# Frontend build
-frontend/dist/
-frontend/build/
+# Frontend build - commented out to commit production build
+# frontend/dist/
+# frontend/build/
 
 # IDE
 .vscode/
