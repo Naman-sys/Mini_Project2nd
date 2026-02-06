@@ -69,26 +69,22 @@ const Dashboard = ({ user, onLogout }) => {
 
   useEffect(() => {
     let scrollTimeout;
+    
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
-      // Show header if at top
       if (currentScrollY < 10) {
         setShowHeader(true);
-        setLastScrollY(currentScrollY);
-        return;
-      }
-      
-      // Hide on scroll down, show on scroll up
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setShowHeader(false);
-      } else if (currentScrollY < lastScrollY) {
-        setShowHeader(true);
+      } else if (currentScrollY > 100) {
+        if (currentScrollY > lastScrollY) {
+          setShowHeader(false);
+        } else {
+          setShowHeader(true);
+        }
       }
       
       setLastScrollY(currentScrollY);
       
-      // Auto-show after idle
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
         setShowHeader(true);
@@ -96,6 +92,7 @@ const Dashboard = ({ user, onLogout }) => {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(scrollTimeout);
