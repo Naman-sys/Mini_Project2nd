@@ -406,10 +406,12 @@ const Dashboard = ({ user, onLogout }) => {
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: showHeader ? 1 : 0, y: showHeader ? 0 : -100 }}
-        transition={{ duration: 0.3 }}
-        className="bg-dark-panel/95 border-b border-dark-border sticky top-0 z-50 backdrop-blur-md shadow-2xl"
+        animate={{ opacity: showHeader ? 1 : 0, y: showHeader ? 0 : -110 }}
+        transition={{ duration: 0.25, ease: "easeInOut" }}
+        className="sticky top-0 z-50 will-change-transform"
+        style={{ marginBottom: showHeader ? 0 : -110 }}
       >
+        <div className="bg-dark-panel/95 border-b border-dark-border backdrop-blur-md shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
@@ -456,6 +458,7 @@ const Dashboard = ({ user, onLogout }) => {
               </div>
             </motion.div>
           </div>
+        </div>
         </div>
       </motion.div>
 
