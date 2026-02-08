@@ -69,8 +69,14 @@ const Dashboard = ({ user, onLogout }) => {
 
   useEffect(() => {
     let scrollTimeout;
-    
+    let isCompactViewport = window.matchMedia('(max-width: 1024px)').matches;
+
     const handleScroll = () => {
+      if (!isCompactViewport) {
+        setShowHeader(true);
+        return;
+      }
+
       const currentScrollY = window.scrollY;
       
       if (currentScrollY < 10) {
@@ -82,6 +88,7 @@ const Dashboard = ({ user, onLogout }) => {
           setShowHeader(true);
         }
       }
+
       
       setLastScrollY(currentScrollY);
       
@@ -91,10 +98,19 @@ const Dashboard = ({ user, onLogout }) => {
       }, 2000);
     };
 
+    const handleResize = () => {
+      isCompactViewport = window.matchMedia('(max-width: 1024px)').matches;
+      if (!isCompactViewport) {
+        setShowHeader(true);
+      }
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
       clearTimeout(scrollTimeout);
     };
   }, [lastScrollY]);
@@ -316,16 +332,34 @@ const Dashboard = ({ user, onLogout }) => {
   };
 
   // Find the best design
+  // Find the best design - use most explicit logic
   const bestDesign = designs.length > 0
-    ? (Array.isArray(mlRankings) && mlRankings.length > 0
-        ? designs.reduce((prev, curr) => {
-            const prevScore = mlRankings.find(r => r.id === prev.id)?.ml_score ?? prev.metrics.sustainabilityIndex;
-            const currScore = mlRankings.find(r => r.id === curr.id)?.ml_score ?? curr.metrics.sustainabilityIndex;
-            return currScore > prevScore ? curr : prev;
-          })
-        : designs.reduce((prev, curr) =>
-            curr.metrics.sustainabilityIndex > prev.metrics.sustainabilityIndex ? curr : prev
-          ))
+    ? (() => {
+        let maxScore = -Infinity;
+        let bestD = null;
+        
+        designs.forEach((design) => {
+          let score = design.metrics.sustainabilityIndex;
+          
+          // Use ML rankings if available
+          if (Array.isArray(mlRankings) && mlRankings.length > 0) {
+            const ml = mlRankings.find(r => r.id === design.id);
+            if (ml?.ml_score !== undefined) {
+              score = ml.ml_score;
+            }
+          }
+          
+          console.log(`Design: ${design.name} (${design.id}) - Score: ${score}`);
+          
+          if (score > maxScore) {
+            maxScore = score;
+            bestD = design;
+          }
+        });
+        
+        console.log(`BEST DESIGN SELECTED: ${bestD?.name} (${bestD?.id})`);
+        return bestD;
+      })()
     : null;
 
   return (
@@ -412,46 +446,46 @@ const Dashboard = ({ user, onLogout }) => {
         style={{ marginBottom: showHeader ? 0 : -110 }}
       >
         <div className="bg-dark-panel/95 border-b border-dark-border backdrop-blur-md shadow-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-text-primary">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary">
                 🌍 Sustainable Design Studio
               </h1>
-              <p className="text-text-secondary mt-2 font-medium">Generative AI-Powered Design & Planning System</p>
+              <p className="text-xs sm:text-sm text-text-secondary mt-1 md:mt-2 font-medium">Generative AI-Powered Design & Planning System</p>
             </div>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-right space-y-2"
+              className="text-right space-y-1"
             >
-              <p className="text-sm text-text-label">Academic Research Project</p>
-              <p className="text-xs text-text-label">Decision Support System v1.0</p>
-              <div className="flex items-center justify-end gap-3 flex-wrap">
-                <span className="text-xs text-text-secondary">Signed in as {user?.name || 'Guest'}</span>
+              <p className="text-[10px] sm:text-xs text-text-label">Academic Research Project</p>
+              <p className="text-[9px] sm:text-xs text-text-label">Decision Support System v1.0</p>
+              <div className="flex items-center justify-end gap-2 sm:gap-3 flex-wrap">
+                <span className="text-[9px] sm:text-xs text-text-secondary">Signed in as {user?.name || 'Guest'}</span>
                 <button
                   onClick={() => setShowShortcuts(true)}
-                  className="px-2 py-1 text-xs rounded-md bg-dark-graphite border border-dark-border text-text-secondary hover:border-accent-lavender hover:text-accent-lavender transition-all"
+                  className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs rounded-md bg-dark-graphite border border-dark-border text-text-secondary hover:border-accent-lavender hover:text-accent-lavender transition-all"
                   title="Show keyboard shortcuts (Ctrl+/)"
                 >
                   ⌨️
                 </button>
                 <button
                   onClick={toggleTheme}
-                  className="px-2 py-1 text-xs rounded-md bg-dark-graphite border border-dark-border text-text-secondary hover:border-accent-amber hover:text-accent-amber transition-all"
+                  className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs rounded-md bg-dark-graphite border border-dark-border text-text-secondary hover:border-accent-amber hover:text-accent-amber transition-all"
                 >
                   {isDark ? '🌙' : '☀️'}
                 </button>
                 <button
                   onClick={() => setIsHistoryOpen(true)}
-                  className="px-3 py-1 text-xs rounded-md bg-dark-graphite border border-dark-border text-text-secondary hover:border-accent-lime-soft hover:text-accent-lime-soft transition-all"
+                  className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs rounded-md bg-dark-graphite border border-dark-border text-text-secondary hover:border-accent-lime-soft hover:text-accent-lime-soft transition-all"
                 >
                   History
                 </button>
                 <button
                   onClick={onLogout}
-                  className="px-3 py-1 text-xs rounded-md bg-dark-graphite border border-dark-border text-text-secondary hover:border-accent-coral hover:text-accent-coral transition-all"
+                  className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs rounded-md bg-dark-graphite border border-dark-border text-text-secondary hover:border-accent-coral hover:text-accent-coral transition-all"
                 >
                   Log out
                 </button>
@@ -463,11 +497,11 @@ const Dashboard = ({ user, onLogout }) => {
       </motion.div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Column - Input Panel */}
           <motion.div
-            className="lg:sticky lg:top-32 lg:h-fit lg:w-[320px] lg:shrink-0"
+            className="lg:sticky lg:top-32 lg:h-fit lg:w-[340px] lg:shrink-0"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
