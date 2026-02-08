@@ -1,0 +1,24 @@
+{
+  "name": "Sustainable Design Studio",
+  "short_name": "Design Studio",
+  "description": "AI-powered sustainable design decision support.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b1f17",
+  "theme_color": "#0b1f17",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

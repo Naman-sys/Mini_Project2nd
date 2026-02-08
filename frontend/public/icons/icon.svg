@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Sustainable Design Studio">
+  <defs>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#38b36a" />
+      <stop offset="1" stop-color="#0b5e3b" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="#0b1f17" />
+  <path
+    d="M128 300c54-90 150-148 256-156-10 110-70 196-160 236-42 18-86 25-130 22 24-16 44-38 58-64l-24-38z"
+    fill="url(#leaf)"
+  />
+  <path
+    d="M200 360c26-12 62-42 94-92 38-60 58-118 62-150"
+    fill="none"
+    stroke="#c7f2d0"
+    stroke-width="18"
+    stroke-linecap="round"
+  />
+</svg>
