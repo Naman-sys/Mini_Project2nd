@@ -68,8 +68,7 @@ function App() {
       setUser(userData)
       localStorage.setItem('sustainable-user', JSON.stringify(userData))
       setIsTransitionLoading(false)
-      // Show welcome screen after successful login
-      setShowWelcome(true)
+      // Don't show welcome on initial login, only on app restart
     }, 900)
   }
 
@@ -113,7 +112,7 @@ function App() {
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
             <div className="h-20 w-20 rounded-3xl bg-dark-surface border border-dark-border shadow-2xl flex items-center justify-center">
-              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M10 28c8-10 20-12 28-6-4 10-14 16-26 16-4 0-6-4-2-10z" fill="#84ff00" fillOpacity="0.85" />
                 <path d="M26 14h16v10H26z" fill="#0ea5e9" fillOpacity="0.8" />
                 <path d="M28 16h4v3h-4zm6 0h4v3h-4zM28 20h4v3h-4zm6 0h4v3h-4z" fill="#0a0a0a" fillOpacity="0.6" />
